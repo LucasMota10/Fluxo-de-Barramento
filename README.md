@@ -1,11 +1,8 @@
-Computer Architecture Project
+# BusFlow in protected mode
 
-BusFlow in protected mode
+## Professor: Euclério Gruellas
 
-Professor: Euclério Gruellas
-
-Authors:
-
+## Authors:
 - Lucas Mota
 - Matheus Paraiso
 - Laura Ferreira
