@@ -6,5 +6,7 @@
 - Lucas Mota
 - Matheus Paraiso
 - Laura Ferreira
-- David William
+- Ivan Souza
+- Felipe
+- Guilherme Neves
 
