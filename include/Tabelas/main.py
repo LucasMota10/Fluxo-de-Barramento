@@ -2,9 +2,12 @@ from Descritor_Segmento import Descritores_Segmento
 from Reg_Deslocamento import Registradores_Deslocamento
 from Reg_Gerais import Registradores_Gerais
 from Reg_Sel_Segmentos import Registradores_Segmento
-from include.Instruções.Moves.Mov import MOV
-from include.Instruções.Moves.Pop import POP
-from include.Instruções.Moves.Push import PUSH
+from Moves.Mov import MOV
+from Moves.Xchg import XCHG
+from Moves.Pop import POP
+from Moves.Push import PUSH
+
+
 
 
 
