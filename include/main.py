@@ -1,65 +1,64 @@
-from Descritor_Segmento import Descritores_Segmento
-from Reg_Deslocamento import Registradores_Deslocamento
-from Reg_Gerais import Registradores_Gerais
-from Reg_Sel_Segmentos import Registradores_Segmento
-from MOV import MOV
-
-
+#from Descritor_Segmento import Descritores_Segmento
+#from Reg_Deslocamento import Registradores_Deslocamento
+#from Reg_Gerais import Registradores_Gerais
+#from Reg_Sel_Segmentos import Registradores_Segmento
+from Instrucoes.Moves.Mov import MOV
+from Instrucoes.Arithmetic.Add import ADD
+from Instrucoes.Compare.Cmp import CMP
+from Instrucoes.Boolean.And import AND
 # Instanciação dos Registradores e Tabela de Descritores
 
-def verifica_tamanho(x):
-    if len(x) != 4 or max(x) > "f" :
-        print("Erro! Valor não válido, tente novamente")
-        return False
-    else:
-        return True
+# def verifica_tamanho(x):
+#     if len(x) != 4 or max(x) > "f" :
+#         print("Erro! Valor não válido, tente novamente")
+#         return False
+#     else:
+#         return True
 
-cs = ss = ds = es = ""
+# cs = ss = ds = es = ""
 
-def menu():
-    print("Olá usuário, Vamos começar o fluxo!")
-    print("Antes de tudo, vamos incializar os registradores")
-    print("Insira o Valor desejado para os registradores de seguimento abaixo:")
-    print("OBS: Apenas 4 Bits em Hexadecimal")
+# def menu():
+#     print("Olá usuário, Vamos começar o fluxo!")
+#     print("Antes de tudo, vamos incializar os registradores")
+#     print("Insira o Valor desejado para os registradores de seguimento abaixo:")
+#     print("OBS: Apenas 4 Bits em Hexadecimal")
         
-    while True:  
-        global cs
-        cs = input("Registrador CS: ")
-        if verifica_tamanho(cs):
-            break
+#     while True:  
+#         global cs
+#         cs = input("Registrador CS: ")
+#         if verifica_tamanho(cs):
+#             break
     
-    while True:  
-        global ss
-        ss = input("Registrador SS: ")
-        if verifica_tamanho(ss):
-            break
-    while True:  
-        global ds
-        ds = input("Registrador DS: ")
-        if verifica_tamanho(ds):
-            break
-    while True:  
-        global es
-        es = input("Registrador ES: ")
-        if verifica_tamanho(es):
-            break
-def print_tabelas():
-    descri_seg.print_matriz()
-    reg_deslocamento.print_matriz()
-    reg_gerais.print_matriz()
-    reg_seletor_seg.print_matriz() 
+#     while True:  
+#         global ss
+#         ss = input("Registrador SS: ")
+#         if verifica_tamanho(ss):
+#             break
+#     while True:  
+#         global ds
+#         ds = input("Registrador DS: ")
+#         if verifica_tamanho(ds):
+#             break
+#     while True:  
+#         global es
+#         es = input("Registrador ES: ")
+#         if verifica_tamanho(es):
+#             break
+# def print_tabelas():
+#     descri_seg.print_matriz()
+#     reg_deslocamento.print_matriz()
+#     reg_gerais.print_matriz()
+#     reg_seletor_seg.print_matriz() 
 
-
-menu()
-reg_deslocamento = Registradores_Deslocamento()
-reg_gerais = Registradores_Gerais()
-reg_seletor_seg = Registradores_Segmento(cs,ss,ds,es)
-descri_seg = Descritores_Segmento(reg_seletor_seg)
+#reg_deslocamento = Registradores_Deslocamento()
+#reg_gerais = Registradores_Gerais()
+#reg_seletor_seg = Registradores_Segmento(cs,ss,ds,es)
+#descri_seg = Descritores_Segmento(reg_seletor_seg)
 
     
   
 
-print_tabelas()
+#print_tabelas()
 
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
@@ -125,10 +124,13 @@ def main():
     match instr:
         case "MOV":
             MOV(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, ss_selector)
-    if instr != "MOV":
-        print("Instrução não suportada. Neste momento, apenas MOV está implementado.")
-        return
-    
+        case "ADD":
+            ADD(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, ss_selector)
+        case "CMP":
+            CMP(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, ss_selector)
+        case "AND":
+            AND(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, ss_selector)
+
     # 4. Informações para o cálculo de endereços lógicos e o fluxo da instrução
     
     
