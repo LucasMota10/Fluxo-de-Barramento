@@ -2,6 +2,7 @@ from Descritor_Segmento import Descritores_Segmento
 from Reg_Deslocamento import Registradores_Deslocamento
 from Reg_Gerais import Registradores_Gerais
 from Reg_Sel_Segmentos import Registradores_Segmento
+from MOV import MOV
 
 
 # Instanciação dos Registradores e Tabela de Descritores
@@ -60,3 +61,76 @@ descri_seg = Descritores_Segmento(reg_seletor_seg)
 
 print_tabelas()
 
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+
+def main():
+    print("==============================================")
+    print("Simulação de Instruções em Modo Protegido (32 bits)")
+    print("==============================================\n")
+    
+    # 1. Leitura dos endereços base dos segmentos
+    print("Informe os endereços BASE dos segmentos (use 8 dígitos hexadecimais, ex: 0x00000000):")
+    code_base_str  = input("   - Endereço base do segmento de CÓDIGO: ").strip()
+    data_base_str  = input("   - Endereço base do segmento de DADOS: ").strip()
+    stack_base_str = input("   - Endereço base do segmento de PILHA: ").strip()
+    
+    try:
+        code_base  = int(code_base_str, 16)
+        data_base  = int(data_base_str, 16)
+        stack_base = int(stack_base_str, 16)
+    except ValueError:
+        print("Erro: Certifique-se de informar os endereços no formato hexadecimal (ex: 0x00000000).")
+        return
+    
+    # O endereço final do segmento de código é um a menos que o endereço base do segmento de dados.
+    # O endereço final do segmento de dados é um a menos que o endereço base do segmento de pilha.
+    code_limit = data_base - 1
+    data_limit = stack_base - 1
+    stack_limit_str = input("Digite o ENDEREÇO FINAL do segmento de PILHA (ex: 0xFFFFFFFF): ").strip()
+    try:
+        stack_limit = int(stack_limit_str, 16)
+    except ValueError:
+        print("Erro: Endereço final do segmento de pilha em formato inválido.")
+        return
+
+    print("\n==============================================")
+    print("Agora, informe os SELETORES e os DIREITOS DE ACESSO de cada segmento:")
+    cs_selector = input("   - Seletor do segmento de CÓDIGO (CS): ").strip()
+    cs_access   = input("   - Direito de acesso do segmento de CÓDIGO (CS): ").strip()
+    
+    ds_selector = input("   - Seletor do segmento de DADOS (DS): ").strip()
+    ds_access   = input("   - Direito de acesso do segmento de DADOS (DS): ").strip()
+    
+    ss_selector = input("   - Seletor do segmento de PILHA (SS): ").strip()
+    ss_access   = input("   - Direito de acesso do segmento de PILHA (SS): ").strip()
+    
+    # 2. Criação e exibição da tabela de descritores
+    print("\n==============================================")
+    print("Tabela de Descritores de Segmentos:")
+    print("|  Seletor  |   Endereço BASE do Segmento   |  Endereço LIMITE do Segmento  |  Direito de Acesso  |")
+    print("-" * 85)
+    descriptors = [
+        {"Seletor": cs_selector, "Base": code_base_str,  "Limite": hex(code_limit),  "Acesso": cs_access},
+        {"Seletor": ds_selector, "Base": data_base_str,  "Limite": hex(data_limit),  "Acesso": ds_access},
+        {"Seletor": ss_selector, "Base": stack_base_str, "Limite": hex(stack_limit), "Acesso": ss_access}
+    ]
+    for d in descriptors:
+        print(f"| {d['Seletor']:^9} | {d['Base']:^27} | {d['Limite']:^29} | {d['Acesso']:^19} |")
+    
+    # 3. Seleção da instrução a ser simulada
+    print("\n==============================================")
+    instr = input("Digite a instrução a ser simulada (ex: MOV): ").strip().upper()
+    match instr:
+        case "MOV":
+            MOV(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, ss_selector)
+    if instr != "MOV":
+        print("Instrução não suportada. Neste momento, apenas MOV está implementado.")
+        return
+    
+    # 4. Informações para o cálculo de endereços lógicos e o fluxo da instrução
+    
+    
+if __name__ == "__main__":
+    main()
