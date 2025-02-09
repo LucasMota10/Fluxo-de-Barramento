@@ -2,7 +2,10 @@ from Descritor_Segmento import Descritores_Segmento
 from Reg_Deslocamento import Registradores_Deslocamento
 from Reg_Gerais import Registradores_Gerais
 from Reg_Sel_Segmentos import Registradores_Segmento
-from MOV import MOV
+from include.Instruções.Moves.Mov import MOV
+from include.Instruções.Moves.Pop import POP
+from include.Instruções.Moves.Push import PUSH
+
 
 
 # Instanciação dos Registradores e Tabela de Descritores
@@ -125,9 +128,15 @@ def main():
     match instr:
         case "MOV":
             MOV(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, ss_selector)
-    if instr != "MOV":
-        print("Instrução não suportada. Neste momento, apenas MOV está implementado.")
-        return
+        case "PUSH":
+            PUSH(code_base, code_limit, stack_base, stack_limit, cs_selector, ss_selector)
+        case "POP":
+            POP(code_base, code_limit, stack_base, stack_limit, cs_selector, ss_selector)
+        case "XCHG":
+            XCHG(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, ss_selector)
+        case _:
+            print("Instrução não suportada. As instruções disponíveis são MOV, PUSH e POP.")
+            return
     
     # 4. Informações para o cálculo de endereços lógicos e o fluxo da instrução
     
