@@ -3,9 +3,10 @@ from Instrucoes.Arithmetic.Add import ADD
 from Instrucoes.Compare.Cmp import CMP
 from Instrucoes.Boolean.And import AND
 from Instrucoes.Moves.Mov import MOV
-from Instrucoes.Moves.Xchg import xchg
-from Instrucoes.Moves.Pop import pop
-from Instrucoes.Moves.Push import push
+from Instrucoes.Moves.Xchg import XCHG
+from Instrucoes.Moves.Pop import POP
+from Instrucoes.Moves.Push import PUSH
+from Instrucoes.Arithmetic.Inc import INC
 
 # Instanciação dos Registradores e Tabela de Descritores
 
@@ -132,11 +133,13 @@ def main():
         case "AND":
             AND(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, ss_selector)
         case "PUSH":
-            push(code_base, code_limit, stack_base, stack_limit, cs_selector, ss_selector)
+            PUSH(code_base, code_limit, stack_base, stack_limit, cs_selector, ss_selector)
         case "POP":
-            pop(code_base, code_limit, stack_base, stack_limit, cs_selector, ss_selector)
+            POP(code_base, code_limit, stack_base, stack_limit, cs_selector, ss_selector)
         case "XCHG":
-            xchg(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, ss_selector)
+            XCHG(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, ss_selector)
+        case "INC":
+            INC(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, ss_selector)
         case _:
             print("Instrução não suportada.")
             return
