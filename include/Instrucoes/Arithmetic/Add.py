@@ -1,7 +1,14 @@
+def Verifica_gpf(selector_base, selector_limit, data):
+    if data < selector_base or data > selector_limit:
+        print("   -> GPF: Endereço fora do limite do segmento!")
+        return False
+    else:
+        return True
+
 def ADD(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, ss_selector):
     print("\nPara a instrução ADD, informe a instrução completa no formato:")
     print("   <OFFSET_INSTRUÇÃO> ADD <DST_OFFSET>, <SRC_OFFSET>")
-    print("Exemplo: 00024000 ADD 00040000 00081B10")
+    print("Exemplo: 00002400 ADD 00004000 000081B1")
     instr_input = input("   - Instrução: ").strip()
 
     try:
@@ -33,55 +40,102 @@ def ADD(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, 
         "EIP": hex(instr_offset),
         "ESI": hex(src_offset),
         "EDI": hex(dst_offset),
-        "EAX": "0x0"
+        "EAX - High": 0x0,
+        "EAX - Low": 0x0
     }
 
     print("\n==============================================")
     print("Simulação da Execução da Instrução ADD")
     print("==============================================\n")
-    
-    print("Etapa 1: Busca da Instrução")
+    print("-" * 60)
+    print("Passo 1 - Barramento de endereço:")
     linear_address_instr = code_base + instr_offset
-    print(f"   -> Endereço Linear da instrução = CS {code_base} + EIP {instr_offset}: {hex(linear_address_instr)}")
-    if linear_address_instr < code_base or linear_address_instr > code_limit:
-        print("   -> GPF: Endereço da instrução fora do limite do segmento de código!")
+    print(f"   -> Registradores: CS = {hex(code_base)}, EIP = {hex(instr_offset)}")
+    if Verifica_gpf(code_base,code_limit,linear_address_instr):
+        print(f"   -> Endereço Linear da instrução ADD = CS + EIP: {hex(linear_address_instr)}")
+    else:
         return
+    print("-" * 60)
+    print("Passo 2 - Barramento de dados")
     print("   -> Salva no seguimento de código a instrução ADD")
+    print(f"   -> EIP é Atualizado: EIP = EIP + 16 bits (4 em hexa) = {hex(instr_offset+4)}")
+    registers['EIP'] = instr_offset+4
     print("-" * 60)
-
-    print("Etapa 2: Busca dos Operandos")
-
-    linear_address_dst = data_base + dst_offset
-    linear_address_src = data_base + src_offset
-
-    print(f"   -> Endereço Linear do End1 = DS ({hex(data_base)} + EDI = {linear_address_dst}")
-    if linear_address_dst < data_base or linear_address_dst > data_limit:
-        print("   -> GPF: Endereço do operando DST fora do limite do segmento de dados!")
+    print("Passo 3 - Barramento de endereço")
+    print(f"   -> Registradores: CS = {hex(code_base)}, EIP = {hex(registers['EIP'])}")
+    if Verifica_gpf(code_base,code_limit,code_base+registers['EIP']):
+        print(f"   -> Endereço Linear do end1 (Destino) = CS + EIP = {hex(code_base + registers['EIP'])}")
+    else:
         return
-    
-    print(f"   -> Endereço Linear do End2 = DS {hex(data_base)} + ESI = {linear_address_src}")
-
-    if linear_address_src < data_base or linear_address_src > data_limit:
-        print("   -> GPF: Endereço do operando SRC fora do limite do segmento de dados!")
+    print("-" * 60)
+    print("Passo 4 - Barramento de dados")
+    registers["EIP"] = registers["EIP"]+4
+    print(f"   -> Salva no seguimento de código o end1")
+    print(f"   -> EIP é atualizado: EIP = EIP + 16 bits (4 bits em hexa) = {hex(registers['EIP'])}")
+    print(f"   -> Atribui valor a ESI e EDI: ESI = {hex(dst_offset)}, EDI = {hex(dst_offset)}")
+    registers['EDI'] = dst_offset
+    registers['ESI'] = dst_offset
+    print("-" * 60)
+    print("Passo 5 - Barramento de endereço")
+    print(f"   -> Registradores: DS = {hex(data_base)}, ESI  = {hex(registers['ESI'])}")
+    if Verifica_gpf(data_base,data_limit,data_base+registers['ESI']):
+        print(f"   -> Endereço Linear do end1 em DS: DS + ESI = {hex(data_base+registers['ESI'])}")
+    else:
         return
-    
     print("-" * 60)
-    
-    print("Etapa 3: Execução da Instrução ADD")
-    src_data_value = int(input("   - Informe o valor armazenado em SRC (ex: 0x12345678): "), 16)
-    dst_data_value = int(input("   - Informe o valor armazenado em DST (ex: 0x87654321): "), 16)
-    
-    result = dst_data_value + src_data_value
-    
-    print(f"   -> Operação: {hex(dst_data_value)} + {hex(src_data_value)} = {hex(result)}")
-    registers["DST"] = hex(result)
-    registers["EAX"] = hex(result)
-    
+    print("Passo 6 - Barramento de dados")
+    print(f"   -> Faz a leitura do valor armazenado no seguimento de dados em end1")
+    dst_data_value = int(input("   -> Informe o valor armazenado no end1 (ex: 0x87654321): "), 16)
+    print(f"   -> Salva em EAX High o valor armazenado: {hex(dst_data_value)}")
+    registers["EAX - High"] = dst_data_value
     print("-" * 60)
-    
+    print("Passo 7 - Barramento de endereço")
+    print(f"   -> Registradores: CS = {hex(code_base)}, EIP = {hex(registers["EIP"])}")
+    if Verifica_gpf(code_base,code_limit,code_base+registers["EIP"]):
+        print(f"   -> Endereço Linear do end2 em CS: CS + EIP = {hex(code_base+registers["EIP"])}")
+    else:
+        return
+    print("-" * 60)
+    print("Passo 8 - Barramento de dados")
+    registers["EIP"] = registers["EIP"]+4
+    print("   -> Salva no seguimento de código o end2")
+    print(f"   -> EIP é atualizado: EIP = EIP + 16 bits (4 bits em hexa) = {hex(registers['EIP'])}")
+    print(f"   -> Atribui o valor do end2 para ESI: ESI = {hex(src_offset)}")
+    registers["ESI"] = src_offset
+    print("-" * 60)
+    print("Passo 9 - Barramento de endereço")
+    print(f"   -> Registradores: DS = {hex(data_base)}, ESI = {hex(src_offset)}")
+    if Verifica_gpf(data_base,data_limit,data_base+src_offset):
+        print(f"   -> Endereço Linear do end2 em DS: DS + ESI = {hex(data_base+registers['ESI'])}")
+    else:
+        return
+    print("-" * 60)
+    print("Passo 10 - Barramento de dados")
+    print(f"   -> Faz a leitura do valor armazenado no end2")
+    src_data_value = int(input("   - Informe o valor armazenado em end2 (ex: 0x12345678): "), 16)
+    print(f"   -> Salva em EAX low o valor armazenado: {hex(src_data_value)}")
+    registers['EAX - Low'] = src_data_value
+    print("-" * 60)
+    print("Passo 11 - Barramento de endereço")
+    print(f"   -> Registradores: DS = {hex(data_base)}, EDI = {hex(registers['EDI'])}")
+    if Verifica_gpf(data_base,data_limit, data_base+registers['EDI']):
+        print(f"   -> Endereço linear do end1 onde vai ser escrito o resultado da instrução ADD: DS + EDI = {hex(data_base+registers['EDI'])}")
+    else:
+        return
+    print("-" * 60)
+    print("Passo 12 - Barramento de dados")
+    print("   -> É realizada a operação de soma dos conteudos de end1 e end2")
+    print(f"   -> EAX = EAX High + EAX LOW, EAX = {hex(registers['EAX - High'])} + {hex(registers['EAX - Low'])} = {hex(registers['EAX - High'] + registers['EAX - Low'])}")
+    print(f" Resultado da soma é escrito em end1!")
+    registers["EAX"] = hex(registers['EAX - High'] + registers['EAX - Low'])
+    print("-" * 60)
     print("Estado final dos Registradores:")
+    registers["EAX - High"] = hex(registers["EAX - High"])
+    registers["EAX - Low"] = hex(registers["EAX - Low"])
+    registers["EDI"] = hex(registers['EDI'])
+    registers['EIP'] = hex(registers['EIP'])
+    registers['ESI'] = hex(registers['ESI'])
     for reg, valor in registers.items():
-        print(f"   {reg}: {valor}")
-        
+        print(f"   {reg}: {valor}")      
     print("\n==============================================")
-    print("Fim da Simulação.")
+    print("Fim da Instrução.")

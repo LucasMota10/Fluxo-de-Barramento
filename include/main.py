@@ -7,6 +7,7 @@ from Instrucoes.Moves.Xchg import XCHG
 from Instrucoes.Moves.Pop import POP
 from Instrucoes.Moves.Push import PUSH
 from Instrucoes.Arithmetic.Inc import INC
+from Instrucoes.Compare.Jmp import JMP
 
 # Instanciação dos Registradores e Tabela de Descritores
 
@@ -140,6 +141,8 @@ def main():
             XCHG(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, ss_selector)
         case "INC":
             INC(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, ss_selector)
+        case "JMP":
+            JMP(code_base, code_limit, cs_selector)
         case _:
             print("Instrução não suportada.")
             return
