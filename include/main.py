@@ -1,11 +1,12 @@
-#from Descritor_Segmento import Descritores_Segmento
-#from Reg_Deslocamento import Registradores_Deslocamento
-#from Reg_Gerais import Registradores_Gerais
-#from Reg_Sel_Segmentos import Registradores_Segmento
 from Instrucoes.Moves.Mov import MOV
 from Instrucoes.Arithmetic.Add import ADD
 from Instrucoes.Compare.Cmp import CMP
 from Instrucoes.Boolean.And import AND
+from Instrucoes.Moves.Mov import MOV
+from Instrucoes.Moves.Xchg import xchg
+from Instrucoes.Moves.Pop import pop
+from Instrucoes.Moves.Push import push
+
 # Instanciação dos Registradores e Tabela de Descritores
 
 # def verifica_tamanho(x):
@@ -130,7 +131,16 @@ def main():
             CMP(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, ss_selector)
         case "AND":
             AND(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, ss_selector)
-
+        case "PUSH":
+            push(code_base, code_limit, stack_base, stack_limit, cs_selector, ss_selector)
+        case "POP":
+            pop(code_base, code_limit, stack_base, stack_limit, cs_selector, ss_selector)
+        case "XCHG":
+            xchg(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, ss_selector)
+        case _:
+            print("Instrução não suportada.")
+            return
+    
     # 4. Informações para o cálculo de endereços lógicos e o fluxo da instrução
     
     
