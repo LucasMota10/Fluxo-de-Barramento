@@ -16,6 +16,7 @@ from Instrucoes.Compare.Jxx import Jxx
 from Instrucoes.Compare.Call import CALL
 from Instrucoes.Compare.Loopxx import LOOPxx
 from Instrucoes.Boolean.Xor import XOR
+from Instrucoes.Boolean.Or import OR
 # Instanciação dos Registradores e Tabela de Descritores
 
 # def verifica_tamanho(x):
@@ -166,6 +167,8 @@ def main():
             LOOPxx(code_base, code_limit, cs_selector, ecx_value)
         case "XOR":
             XOR(code_base, code_limit, cs_selector)
+        case "OR":
+            OR(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, ss_selector)
         case _:
             print("Instrução não suportada.")
             return
