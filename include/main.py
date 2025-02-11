@@ -12,7 +12,10 @@ from Instrucoes.Arithmetic.Sub import SUB
 from Instrucoes.Arithmetic.Dec import DEC
 from Instrucoes.Arithmetic.Neg import NEG
 from Instrucoes.Arithmetic.Mul import MUL
-
+from Instrucoes.Compare.Jxx import Jxx
+from Instrucoes.Compare.Call import CALL
+from Instrucoes.Compare.Loopxx import LOOPxx
+from Instrucoes.Boolean.Xor import XOR
 # Instanciação dos Registradores e Tabela de Descritores
 
 # def verifica_tamanho(x):
@@ -155,6 +158,14 @@ def main():
             NEG(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, ss_selector)
         case "MUL":
             MUL(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, ss_selector)
+        case "JXX":
+            Jxx(code_base, code_limit, cs_selector, flags)
+        case "CALL":
+            CALL(code_base, code_limit, stack_base, stack_limit, cs_selector, ss_selector)
+        case "LOOPXX":
+            LOOPxx(code_base, code_limit, cs_selector, ecx_value)
+        case "XOR":
+            XOR(code_base, code_limit, cs_selector)
         case _:
             print("Instrução não suportada.")
             return
