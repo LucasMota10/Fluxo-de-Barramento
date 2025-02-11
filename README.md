@@ -21,4 +21,10 @@ Siga os passos abaixo para executar o projeto:
    ```bash
    python include\main.py
 
+## Instruções
+
+Estão disponiveis as 14 instruções:
+
+MOV, ADD, CMP, AND, PUSH, POP, XCHG, INC, JMP, SUB, DEC, NEG, MUL, OR
+
 
