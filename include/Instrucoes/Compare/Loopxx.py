@@ -1,18 +1,18 @@
-def CALL(code_base, code_limit, stack_base, stack_limit, cs_selector, ss_selector):
+def LOOPxx(code_base, code_limit, cs_selector, ecx_value):
     """
-    Simulação de uma instrução CALL em modo Protegido (32 bits).
+    Simulação de uma instrução LOOPxx (loop condicional) em modo Protegido (32 bits).
     Inclui verificação dos endereços lineares:
         - Se o endereço calculado estiver fora do intervalo do segmento,
           cancela a operação e informa a ocorrência de GPF.
     """
-    print("\nPara a instrução CALL, informe a instrução completa no formato:")
-    print("   <OFFSET_INSTRUÇÃO> CALL <ADDR_OFFSET>")
-    print("Exemplo: 00024000 CALL 00040000")
+    print("\nPara a instrução LOOPxx, informe a instrução completa no formato:")
+    print("   <OFFSET_INSTRUÇÃO> LOOPxx <ADDR_OFFSET>")
+    print("Exemplo: 00024000 LOOP 00040000")
     instr_input = input("   - Instrução: ").strip()
 
     # Tenta separar os componentes da linha de comando.
     try:
-        # Exemplo de entrada: "00024000 CALL 00040000"
+        # Exemplo de entrada: "00024000 LOOP 00040000"
         # Primeiro separamos por espaços:
         partes = instr_input.split()
         if len(partes) != 3:
@@ -20,9 +20,9 @@ def CALL(code_base, code_limit, stack_base, stack_limit, cs_selector, ss_selecto
 
         # O primeiro elemento é o offset da instrução (EIP)
         instr_offset_str = partes[0]
-        # O segundo deve ser o mnemônico (CALL)
+        # O segundo deve ser o mnemônico (LOOPxx)
         mnemonic = partes[1].upper()
-        if mnemonic != "CALL":
+        if mnemonic != "LOOP":
             print("Erro: Instrução Inválida")
             return
 
@@ -40,14 +40,13 @@ def CALL(code_base, code_limit, stack_base, stack_limit, cs_selector, ss_selecto
     # Inicializa os registradores (incluindo EIP com o offset da instrução)
     registers = {
         "CS": cs_selector,
-        "SS": ss_selector,
         "EIP": hex(instr_offset),
-        "ESP": hex(stack_limit),  # Inicializa o ponteiro da pilha no limite superior
+        "ECX": hex(ecx_value),
         "ADDR": hex(addr_offset)
     }
 
-    print("==============================================")
-    print("Simulação da Execução da Instrução CALL")
+    print("\n==============================================")
+    print("Simulação da Execução da Instrução LOOPxx")
     print("==============================================\n")
     
     # -- Etapa 1: Busca da Instrução --
@@ -84,37 +83,24 @@ def CALL(code_base, code_limit, stack_base, stack_limit, cs_selector, ss_selecto
     print(f"   -> Registrador CS = {cs_selector}")
     print("-" * 60)
     
-    # -- Etapa 3: Salvamento do Endereço de Retorno na Pilha --
-    print("Etapa 3: Salvamento do Endereço de Retorno na Pilha")
-    # O endereço de retorno é o próximo endereço após a instrução CALL
-    return_address = instr_offset + 5  # Tamanho da instrução CALL (5 bytes)
-    
-    # Verifica se o endereço da pilha está dentro dos limites
-    esp_value = stack_limit - 4  # Subtrai 4 bytes para armazenar o endereço de retorno
-    if esp_value < stack_base:
-        print("   -> GPF: Estouro da pilha! Endereço fora do limite do segmento de pilha.")
-        return
+    # -- Etapa 3: Execução da Instrução LOOPxx --
+    print("Etapa 3: Execução da Instrução LOOPxx")
+    # Decrementa o registrador ECX
+    ecx_value -= 1
+    registers["ECX"] = hex(ecx_value)
+    print(f"   -> Decrementando ECX. Novo valor: {hex(ecx_value)}")
 
-    print(f"   -> Endereço de Retorno: {hex(return_address)}")
-    print(f"   -> Salvando endereço de retorno na pilha (SS:ESP = {hex(esp_value)})")
-    print(f"   -> Atualizando ESP para: {hex(esp_value)}")
-    
-    # Atualiza o registrador ESP
-    registers["ESP"] = hex(esp_value)
-    
-    print("-" * 60)
-    
-    # -- Etapa 4: Execução da Instrução CALL --
-    print("Etapa 4: Execução da Instrução CALL")
-    print(f"   -> Operação: CALL {hex(addr_offset)}")
-    print(f"   -> Atualizando EIP para o endereço de destino: {hex(addr_offset)}")
-    
-    # Atualiza o registrador EIP com o endereço de destino
-    registers["EIP"] = hex(addr_offset)
+    # Verifica se ECX é diferente de zero
+    if ecx_value != 0:
+        print(f"   -> ECX != 0. Saltando para o endereço: {hex(addr_offset)}")
+        # Atualiza o registrador EIP com o endereço de destino
+        registers["EIP"] = hex(addr_offset)
+    else:
+        print("   -> ECX == 0. Continua execução sequencial.")
     
     print("-" * 60)
     
-    # -- Etapa 5: Estado Final dos Registradores --
+    # -- Etapa 4: Estado Final dos Registradores --
     print("Estado final dos Registradores:")
     for reg, valor in registers.items():
         print(f"   {reg}: {valor}")

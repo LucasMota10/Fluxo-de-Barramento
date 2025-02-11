@@ -47,7 +47,7 @@ def INC(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, 
         "EFLAGS": {"ZF": 0, "SF": 0, "OF": 0}  # Flags relevantes para a operação INC
     }
 
-    print("\n==============================================")
+    print("==============================================")
     print("Simulação da Execução da Instrução INC")
     print("==============================================\n")
     

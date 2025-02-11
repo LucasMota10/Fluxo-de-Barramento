@@ -90,9 +90,9 @@ def SUB(code_base, code_limit, data_base, data_limit, cs_selector, ds_selector, 
     registers["EAX - High"] = dst_data_value
     print("-" * 60)
     print("Passo 7 - Barramento de endereço")
-    print(f"   -> Registradores: CS = {hex(code_base)}, EIP = {hex(registers["EIP"])}")
+    print(f"   -> Registradores: CS = {hex(code_base)}, EIP = {hex(registers['EIP'])}")
     if Verifica_gpf(code_base,code_limit,code_base+registers["EIP"]):
-        print(f"   -> Endereço Linear do end2 em CS: CS + EIP = {hex(code_base+registers["EIP"])}")
+        print(f"   -> Endereço Linear do end2 em CS: CS + EIP = {hex(code_base+registers['EIP'])}")
     else:
         return
     print("-" * 60)
